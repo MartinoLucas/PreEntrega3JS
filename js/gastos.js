@@ -5,7 +5,8 @@ tipoDato = document.querySelector("#tipoDato"),
 importe = document.querySelector("#inputImporte"),
 tableBody = document.querySelector("#tableBody"),
 msgErrorGst = document.querySelector("#msgErrorGst"),
-btnTotal = document.querySelector("#btnTotal");
+btnTotal = document.querySelector("#btnTotal"),
+h3Gastos= document.querySelector("#h3Gastos");
 
 let gastos;
 // JSON.parse(localStorage.getItem("usuarios")) ? (usuarios = JSON.parse(localStorage.getItem("usuarios"))) : (usuarios = [])
@@ -53,6 +54,15 @@ function cuadroHTML(arr){
              </tr>`;
         tableBody.innerHTML += html;
     };
+
+    const arrayBotones = document.querySelectorAll('td .btn');
+    arrayBotones.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      gastos = gastos.filter(el => el.nombre != btn.id);
+      guardarLS(gastos);
+      cuadroHTML(gastos);
+    })
+  });
 };
 
 class Gasto {
@@ -63,20 +73,15 @@ class Gasto {
     }
 };
 
+function HTMLTotal(num){
+    h3Gastos.innerHTML=`El total de tus gastos es de $${num}.000`;
+};
+
 // EJECUTO FunCTIONS
 guardarLS(gastos);
 cuadroHTML(gastos);
 
 // Listeners
-const arrayBotones = document.querySelectorAll('td .btn');
-  arrayBotones.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      gastos = gastos.filter(el => el.nombre != btn.id);
-      guardarLS(gastos);
-      cuadroHTML(gastos);
-    })
-  });
-
 btnAgregar.addEventListener("click", (e)=>{
     e.preventDefault();
 
@@ -92,10 +97,14 @@ btnAgregar.addEventListener("click", (e)=>{
 btnTotal.addEventListener("click", (e)=>{
     e.preventDefault()
 
+    let gastosLS = recuperarLS("gastos")
     
+    let gastosImporte = gastosLS.reduce((acc, el)=>{
+        return acc + parseInt(el.importe)
+    }, 0); 
+    
+    HTMLTotal(gastosImporte);
 })
-
-
 
 
 
